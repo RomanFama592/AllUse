@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const db = require("./databases/schema_database")("accounts");
+const db = require("./databases/schema_database")(process.env.NAMEDATABASE);
 const users = require("./databases/table_users")(db);
 
 const app = require("./express/declared-express");
