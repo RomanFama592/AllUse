@@ -1,4 +1,4 @@
-const path = require("path")
+const path = require("path");
 const Sequelize = require("sequelize").Sequelize;
 
 function createSequelize(namedatabase) {
@@ -9,11 +9,15 @@ function createSequelize(namedatabase) {
   }
 
   if (process.env.DB === "sqlite") {
-    return new Sequelize(namedatabase, "username", null, {
-      dialect: "sqlite",
-      storage: path.join(__dirname, `${namedatabase}.sqlite`),
-      logging: process.env.LOGGINGDB.toLowerCase() === "true",
-    });
+    try {
+      return new Sequelize(namedatabase, "username", null, {
+        dialect: "sqlite",
+        storage: path.join(__dirname, `${namedatabase}.sqlite`),
+        logging: process.env.LOGGINGDB.toLowerCase() === "true",
+      });
+    } catch (error) {
+      return { error: error };
+    }
   }
 
   if (!process.env.DBHOST) {
@@ -35,16 +39,20 @@ function createSequelize(namedatabase) {
   }
 
   if (process.env.DB === "mysql") {
-    return new Sequelize(
-      namedatabase,
-      process.env.DBUSER,
-      process.env.DBPASSWORD,
-      {
-        host: process.env.DBHOST,
-        dialect: "mysql",
-        logging: process.env.LOGGINGDB.toLowerCase() === "true",
-      }
-    );
+    try {
+      return new Sequelize(
+        namedatabase,
+        process.env.DBUSER,
+        process.env.DBPASSWORD,
+        {
+          host: process.env.DBHOST,
+          dialect: "mysql",
+          logging: process.env.LOGGINGDB.toLowerCase() === "true",
+        }
+      );
+    } catch (error) {
+      return { error: error };
+    }
   }
 
   return {
