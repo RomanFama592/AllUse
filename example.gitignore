@@ -1,0 +1,4 @@
+.gitignore
+micro-services/**/node_modules
+micro-services/**/.env
+micro-services/**/pnpm-lock.yaml
