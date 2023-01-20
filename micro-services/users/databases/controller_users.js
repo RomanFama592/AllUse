@@ -17,25 +17,25 @@ async function addUser({ username, email, password }) {
   return created;
 }
 
-function removeUser(username) {
-  const user = Users.update(
+async function removeUser({ username, email }) {
+  const rowAffects = Users.update(
     { deleteUser: true },
     {
-      where: { username: username, deleteUser: false },
+      where: { username: username, email: email, deleteUser: false },
     }
   );
 
-  return user !== null;
+  return rowAffects > 0;
 }
 
-function findOneUser(username) {
+function findOneUserByEmail({ email }) {
   return Users.findOne({
-    where: { username: username, deleteUser: false },
+    where: { email: email, deleteUser: false },
   });
 }
 
-async function ComparePasswordOfAUser(username, password) {
-  const user = await findOneUser(username);
+async function ComparePasswordOfAUser({ email, password }) {
+  const user = await findOneUserByEmail({ email });
 
   if (user !== null) {
     return false;
@@ -52,7 +52,7 @@ async function hashingPassword(password) {
 module.exports = {
   addUser,
   removeUser,
-  findOneUser,
+  findOneUserByEmail,
   ComparePasswordOfAUser,
   hashingPassword,
 };
