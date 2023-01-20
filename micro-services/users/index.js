@@ -2,10 +2,6 @@ require("dotenv").config();
 
 const db = require("./databases/schema_database")("accounts");
 
-if (!db.models["users"]) {
-  require("./databases/table_users")(db);
-}
-
 const app = require("./express/declared-express");
 
 app.listen(app.get("port"), () => {
