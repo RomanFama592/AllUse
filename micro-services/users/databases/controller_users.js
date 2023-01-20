@@ -1,17 +1,20 @@
 const db = require("./schema_database")("accounts");
-const Users = db.model("users");
+if (!db.models["users"]) {
+  require("./table_users.js")(db);
+}
+const Users = db.models["users"];
 const bcrypt = require("bcryptjs");
 
 //TODO: añadir codigos de error
 
-async function addUser(username, password) {
+async function addUser({ username, email, password }) {
   const passwordHash = await hashingPassword(password);
-  const user = await Users.create({
-    username: username,
-    passwordHash: passwordHash,
+  const [user, created] = await Users.findOrCreate({
+    where: { username: username, email: email, deleteUser: false },
+    defaults: { passwordHash: passwordHash },
   });
 
-  return user !== null;
+  return created;
 }
 
 function removeUser(username) {
