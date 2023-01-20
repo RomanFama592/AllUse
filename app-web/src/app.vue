@@ -19,7 +19,7 @@ const currentView = computed(() => {
 </script>
 
 <template>
-  <div>"
+  <div>
     <a href="#/error">throw error 404</a>
     <component :is="currentView" />
   </div>
