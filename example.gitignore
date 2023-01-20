@@ -1,28 +1,29 @@
 # Logs
 logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-# Route of Pack Manager
-pnpm-lock.yaml* 
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+lerna-debug.log
+
+# pnpm package manager file, add yours here
+pnpm-lock.yaml
 
 
+# Editor directories and files
 node_modules
 dist
 dist-ssr
 *.local
-
-# Editor directories and files
-.vscode*
+.vscode
 .idea
 .DS_Store
 *.suo
-*.ntvs*
+*.ntvs
 *.njsproj
 *.sln
 *.sw?
-.env*
+.env
 .gitignore
+.sqlite
