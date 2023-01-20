@@ -2,10 +2,16 @@ const path = require("path");
 const Sequelize = require("sequelize").Sequelize;
 
 function createSequelize(namedatabase) {
+  if(typeof namedatabase !== "string"){
+    throw new Error(
+      `el parametro tiene que ser un string`
+    );
+  }
+
   if (!process.env.DB) {
-    return {
-      error: `variable de entorno "DB" no existe, porfavor vaya al archivo ".env" y creela`,
-    };
+    throw new Error(
+      `variable de entorno "DB" no existe, porfavor vaya al archivo ".env" y creela`
+    );
   }
 
   if (process.env.DB === "sqlite") {
@@ -16,26 +22,26 @@ function createSequelize(namedatabase) {
         logging: process.env.LOGGINGDB.toLowerCase() === "true",
       });
     } catch (error) {
-      return { error: error };
+      throw new Error(error);
     }
   }
 
   if (!process.env.DBHOST) {
-    return {
-      error: `variable de entorno "DBHOST" no existe, porfavor vaya al archivo ".env" y creela`,
-    };
+    throw new Error(
+      `variable de entorno "DBHOST" no existe, porfavor vaya al archivo ".env" y creela`
+    );
   }
 
   if (!process.env.DBUSER) {
-    return {
-      error: `variable de entorno "DBUSER" no existe, porfavor vaya al archivo ".env" y creela`,
-    };
+    throw new Error(
+      `variable de entorno "DBUSER" no existe, porfavor vaya al archivo ".env" y creela`
+    );
   }
 
   if (!process.env.DBPASSWORD) {
-    return {
-      error: `variable de entorno "DBPASSWORD" no existe, porfavor vaya al archivo ".env" y creela`,
-    };
+    throw new Error(
+      `variable de entorno "DBPASSWORD" no existe, porfavor vaya al archivo ".env" y creela`
+    );
   }
 
   if (process.env.DB === "mysql") {
@@ -51,13 +57,13 @@ function createSequelize(namedatabase) {
         }
       );
     } catch (error) {
-      return { error: error };
+      throw new Error(error);
     }
   }
 
-  return {
-    error: `variable de entorno "DB" no esta bien definida, tiene que ser "mysql" o "sqlite"`,
-  };
+  throw new Error(
+    `variable de entorno "DB" no esta bien definida, tiene que ser "mysql" o "sqlite"`
+  );
 }
 
 module.exports = createSequelize;
