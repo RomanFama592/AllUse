@@ -1,6 +1,6 @@
-const db = require("./schema_database")("users");
+const db = require("./schema_database")("accounts");
+const Users = db.model("users");
 const bcrypt = require("bcryptjs");
-const Users = db.model("Users");
 
 //TODO: añadir codigos de error
 
