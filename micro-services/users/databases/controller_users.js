@@ -1,4 +1,4 @@
-const db = require("./schema_database")(process.env.NAMEDATABASE);
+const db = require("./schema_database")("users");
 const bcrypt = require("bcryptjs");
 const Users = db.model("Users");
 
