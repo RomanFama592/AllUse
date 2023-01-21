@@ -1,6 +1,6 @@
 const db = require("./schema_database")("accounts");
 if (!db.models["users"]) {
-  require("./table_users.js")(db);
+  require("./table_users")(db);
 }
 const Users = db.models["users"];
 const bcrypt = require("bcryptjs");
@@ -13,19 +13,33 @@ async function addUser({ username, email, password }) {
     where: { username: username, email: email, deleteUser: false },
     defaults: { passwordHash: passwordHash },
   });
+  await user.save();
 
   return created;
 }
 
-async function removeUser({ username, email }) {
+async function removeUser({ id }) {
+  if (typeof id !== "number") {
+    return false;
+  }
   const rowAffects = Users.update(
     { deleteUser: true },
     {
-      where: { username: username, email: email, deleteUser: false },
+      where: { id: id, deleteUser: false },
     }
   );
 
+  console.log(await rowAffects > 0)
+
   return rowAffects > 0;
+}
+
+async function getIDUserSecure({ email, password }) {
+  const user = await findOneUserByEmail({ email: email });
+  if (!(await ComparePasswordOfAUser({ user: user, password: password }))) {
+    return null;
+  }
+  return user.id;
 }
 
 function findOneUserByEmail({ email }) {
@@ -34,10 +48,8 @@ function findOneUserByEmail({ email }) {
   });
 }
 
-async function ComparePasswordOfAUser({ email, password }) {
-  const user = await findOneUserByEmail({ email });
-
-  if (user !== null) {
+async function ComparePasswordOfAUser({ user, password }) {
+  if (user === null) {
     return false;
   }
 
@@ -53,6 +65,7 @@ module.exports = {
   addUser,
   removeUser,
   findOneUserByEmail,
+  getIDUserSecure,
   ComparePasswordOfAUser,
   hashingPassword,
 };
