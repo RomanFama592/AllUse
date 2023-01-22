@@ -35,8 +35,6 @@ router.post("/login", validateLogin, async (rq, rs) => {
   return rs.send("Ok");
 });
 
-router.put("/account", (rq, rs) => {});
-
 //send cookie "sessionid"
 router.delete("/account", validateDeleteAccount, async (rq, rs) => {
   const jwtDecode = await decodeJWT(rq.body.sessionid);
