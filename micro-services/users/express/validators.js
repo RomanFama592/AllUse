@@ -87,4 +87,17 @@ function validateLogin(rq, rs, next) {
   next();
 }
 
-module.exports = { validateSignup, validateLogin };
+function validateDeleteAccount(rq, rs, next) {
+  const { sessionid } = rq.body;
+
+  if (sessionid === undefined) {
+    return rs.send("ID");
+  }
+  if (!validator.isJWT(sessionid)) {
+    return rs.send("ID");
+  }
+
+  next();
+}
+
+module.exports = { validateSignup, validateLogin, validateDeleteAccount };
