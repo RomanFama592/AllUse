@@ -14,6 +14,10 @@ function createUsers(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       passwordHash: {
         type: DataTypes.STRING(64),
         allowNull: false,

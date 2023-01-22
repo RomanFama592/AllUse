@@ -1,43 +1,51 @@
 const db = require("./schema_database")("accounts");
-const Users = db.model("users");
+if (!db.models["users"]) {
+  require("./table_users")(db);
+}
+const Users = db.models["users"];
 const bcrypt = require("bcryptjs");
 
 //TODO: añadir codigos de error
 
-async function addUser(username, password) {
+async function addUser({ username, email, password }) {
   const passwordHash = await hashingPassword(password);
-  const user = await Users.create({
-    username: username,
-    passwordHash: passwordHash,
+  const [user, created] = await Users.findOrCreate({
+    where: { username, email, deleteUser: false },
+    defaults: { passwordHash },
   });
+  await user.save();
 
-  return user !== null;
+  return created;
 }
 
-function removeUser(username) {
-  const user = Users.update(
+async function removeUser({ id }) {
+  const [affectedCount] = await Users.update(
     { deleteUser: true },
     {
-      where: { username: username, deleteUser: false },
+      where: { id, deleteUser: false },
     }
   );
-
-  return user !== null;
+  return affectedCount > 0;
 }
 
-function findOneUser(username) {
+async function getIDUserSecure({ email, password }) {
+  const user = await findOneUserByEmail({ email });
+  if (user === null) {
+    return null;
+  }
+  if (!(await ComparePasswordOfAUser({ user, password }))) {
+    return null;
+  }
+  return user.id;
+}
+
+function findOneUserByEmail({ email }) {
   return Users.findOne({
-    where: { username: username, deleteUser: false },
+    where: { email, deleteUser: false },
   });
 }
 
-async function ComparePasswordOfAUser(username, password) {
-  const user = await findOneUser(username);
-
-  if (user !== null) {
-    return false;
-  }
-
+async function ComparePasswordOfAUser({ user, password }) {
   return bcrypt.compare(password, user.passwordHash);
 }
 
@@ -49,7 +57,8 @@ async function hashingPassword(password) {
 module.exports = {
   addUser,
   removeUser,
-  findOneUser,
+  findOneUserByEmail,
+  getIDUserSecure,
   ComparePasswordOfAUser,
   hashingPassword,
 };
