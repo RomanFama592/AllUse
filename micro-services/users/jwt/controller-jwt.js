@@ -1,23 +1,26 @@
 const { SignJWT, jwtVerify } = require("jose");
-const CUsers = require("../databases/controller_users");
+const { getIDUserSecure } = require("../databases/controller_users");
 
-async function createJWTWithUserID(rq) {
-  const id = await CUsers.getIDUserSecure(rq.body);
+async function createJWTWithUserID({ email, password }) {
+  const id = await getIDUserSecure({ email, password });
 
   if (id === null) {
     return null;
   }
 
-  const jwt = new SignJWT({ id: id });
+  const jwt = new SignJWT({ id });
   jwt.setProtectedHeader({ alg: "HS256", typ: "JWT" });
 
   return jwt.sign(new TextEncoder().encode(process.env.JWTKEYPRIVATE));
 }
 
-function verifyJWT({ sessionid }) {
+/**
+ * retorna un objeto con los parametros payload y headers
+ */
+function decodeJWT(jwt) {
   try {
     return jwtVerify(
-      new TextEncoder().encode(sessionid),
+      new TextEncoder().encode(jwt),
       new TextEncoder().encode(process.env.JWTKEYPRIVATE)
     );
   } catch (err) {
@@ -25,4 +28,4 @@ function verifyJWT({ sessionid }) {
   }
 }
 
-module.exports = { createJWTWithUserID, verifyJWT };
+module.exports = { createJWTWithUserID, decodeJWT };

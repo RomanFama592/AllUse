@@ -10,8 +10,8 @@ const bcrypt = require("bcryptjs");
 async function addUser({ username, email, password }) {
   const passwordHash = await hashingPassword(password);
   const [user, created] = await Users.findOrCreate({
-    where: { username: username, email: email, deleteUser: false },
-    defaults: { passwordHash: passwordHash },
+    where: { username, email, deleteUser: false },
+    defaults: { passwordHash },
   });
   await user.save();
 
@@ -19,24 +19,21 @@ async function addUser({ username, email, password }) {
 }
 
 async function removeUser({ id }) {
-  if (typeof id !== "number") {
-    return false;
-  }
-  const rowAffects = Users.update(
+  const [affectedCount] = await Users.update(
     { deleteUser: true },
     {
-      where: { id: id, deleteUser: false },
+      where: { id, deleteUser: false },
     }
   );
-
-  console.log(await rowAffects > 0)
-
-  return rowAffects > 0;
+  return affectedCount > 0;
 }
 
 async function getIDUserSecure({ email, password }) {
-  const user = await findOneUserByEmail({ email: email });
-  if (!(await ComparePasswordOfAUser({ user: user, password: password }))) {
+  const user = await findOneUserByEmail({ email });
+  if (user === null) {
+    return null;
+  }
+  if (!(await ComparePasswordOfAUser({ user, password }))) {
     return null;
   }
   return user.id;
@@ -44,15 +41,11 @@ async function getIDUserSecure({ email, password }) {
 
 function findOneUserByEmail({ email }) {
   return Users.findOne({
-    where: { email: email, deleteUser: false },
+    where: { email, deleteUser: false },
   });
 }
 
 async function ComparePasswordOfAUser({ user, password }) {
-  if (user === null) {
-    return false;
-  }
-
   return bcrypt.compare(password, user.passwordHash);
 }
 
