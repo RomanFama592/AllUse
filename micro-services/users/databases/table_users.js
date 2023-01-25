@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 
 function createUsers(sequelize) {
   return sequelize.define(
-    "Users",
+    "users",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -11,6 +11,10 @@ function createUsers(sequelize) {
         primaryKey: true,
       },
       username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
         type: DataTypes.STRING,
         allowNull: false,
       },

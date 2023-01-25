@@ -3,9 +3,10 @@ const app = express()
 
 //set configs
 app.set("port", process.env.PORT || 10000)
+app.set("trust proxy", false)
 
 //middleware
-try{app.use(morgan("dev"));}catch(err){}
+try{app.use(require("morgan")("dev"));}catch(err){}
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
