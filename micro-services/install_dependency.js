@@ -1,30 +1,33 @@
 const fs = require("fs");
 const path = require("path");
-const child_process = require("child_process");
+const { exec } = require("child_process");
 
 const directory = ".";
-const commandExec = "pnpm i";
+const commandExecNode = process.argv[2]; //command for install all libraries
 
 fs.readdir(directory, (err, files) => {
   if (err) throw err;
 
-  files.forEach((folder) => {
-    if (!fs.lstatSync(path.join(__dirname, folder)).isDirectory()) {
+  files.forEach((file) => {
+    if (!fs.lstatSync(path.join(__dirname, file)).isDirectory()) {
       return;
     }
 
-    if (!fs.existsSync(path.join(__dirname, folder, "package.json"))) {
-        return;
+    if (fs.existsSync(path.join(__dirname, file, "package.json"))) {
+      var command = `cd ${directory}/${file} && ${commandExecNode}`;
     }
 
-    const command = `cd ${directory}/${folder} && ${commandExec}`;
-    child_process.exec(command, (error, stdout, stderr) => {
+    if (command === null) {
+      return;
+    }
+
+    exec(command, (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);
         return;
       }
-      stderr ? console.log(`stderr: ${stderr}`) : "";
       stdout ? console.log(`stdout: ${stdout}`) : "";
+      stderr ? console.log(`stderr: ${stderr}`) : "";
     });
   });
 });
