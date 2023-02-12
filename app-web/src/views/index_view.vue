@@ -1,7 +1,28 @@
+<script setup>
+  import Header from "../components/header.vue";
+  import Main from "../components/main.vue";
+  import Footer from "../components/footer.vue";
+</script>
+
 <template>
-  <div>
-    <h1 class="fs-900 fw-bold">Inicio</h1>
+  <div class="layout">
+    <Header />
+    <Main />
+    <Footer />
   </div>
 </template>
-<script setup></script>
-<style lang="scss" scoped></style>
+
+<style lang="scss" scoped>
+  .layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  Header,
+  Nav,
+  Main,
+  Footer {
+    flex: 1;
+  }
+</style>
