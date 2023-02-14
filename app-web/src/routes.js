@@ -9,7 +9,7 @@ const routes = [
     component: index_view,
   },
   {
-    path: '/:catchAll',
+    path: '/:pathMatch(.*)*',
     component: error_404_view,
   }
 ]
